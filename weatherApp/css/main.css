@@ -51,10 +51,10 @@ main .weather-info {
   transition-property: opacity;
 }
 main .weather-info .weather-info__search-view {
-  height: 200px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  height: 200px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;

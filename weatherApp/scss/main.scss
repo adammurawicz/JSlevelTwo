@@ -45,8 +45,8 @@ main {
         transition-property: opacity;
 
         .weather-info__search-view {
-            height: 200px;
             display: flex;
+            height: 200px;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
