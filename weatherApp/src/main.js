@@ -1,3 +1,5 @@
+import {getWeatherByCity} from './apiService.js'
+
 const viewElement = {}
 
 const GetDomElement = () => {
@@ -29,12 +31,17 @@ const startApp = () => {
     setupListener()
 }
 
-const onEnterSubmit = () => {
-
+const onEnterSubmit = e => {
+    if(e.keyCode === 13) {
+        let query = viewElement.searchInput.value || 'Poznan'
+        getWeatherByCity(query).then(data => {
+            console.log(data.main);
+        })
+    }
 }
 
 const onClickSubmit = () => {
-    
+
 }
 
 document.addEventListener('DOMContentLoaded', startApp)
