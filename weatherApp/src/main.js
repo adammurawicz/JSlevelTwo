@@ -24,6 +24,7 @@ const GetDomElement = () => {
 const setupListener = () => {
     viewElement.searchInput.addEventListener('keydown', onEnterSubmit)
     viewElement.searchButton.addEventListener('click', onClickSubmit)
+    viewElement.returnToSearchBtn.addEventListener('click', returnToSearch)
 }
 
 const startApp = () => {
@@ -33,15 +34,48 @@ const startApp = () => {
 
 const onEnterSubmit = e => {
     if(e.keyCode === 13) {
+        fadeInOut()
         let query = viewElement.searchInput.value || 'Poznan'
         getWeatherByCity(query).then(data => {
             console.log(data.main);
+            switchView()
+            fadeInOut()
         })
     }
 }
 
 const onClickSubmit = () => {
+    let query = viewElement.searchInput.value || 'Poznan'
+    getWeatherByCity(query).then(data => {
+        console.log(data.main);
+        switchView()
+    })
+}
 
+const fadeInOut = () => {
+    if(viewElement.mainContainer.style.opacity === '1' || viewElement.mainContainer.style.opacity === '') {
+        viewElement.mainContainer.style.opacity = '0'
+    } else {
+        viewElement.mainContainer.style.opacity = '1'
+    }
+}
+
+const switchView = () => {
+    if(viewElement.weatherSearchView.style.display !== 'none') {
+        viewElement.weatherSearchView.style.display = 'none'
+        viewElement.weatherForecastView.style.display = 'flex'
+    } else {
+        viewElement.weatherForecastView.style.display = 'none'
+        viewElement.weatherSearchView.style.display = 'flex'
+    }
+}
+
+const returnToSearch = () => {
+    fadeInOut()
+    setTimeout(() => {
+        switchView()
+        fadeInOut()
+    }, 500)
 }
 
 document.addEventListener('DOMContentLoaded', startApp)
