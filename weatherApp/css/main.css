@@ -87,4 +87,24 @@ main .weather-info .weather-info__search-view button:hover {
 }
 main .weather-info .weather-info__forecast-view {
   display: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+}
+main .weather-info .weather-info__forecast-view button {
+  width: 60%;
+  -webkit-box-ordinal-group: 2;
+      -ms-flex-order: 1;
+          order: 1;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.3em;
+}
+main .weather-info .weather-info__forecast-view h2, main .weather-info .weather-info__forecast-view p, main .weather-info .weather-info__forecast-view button {
+  margin: 0.5em;
 }/*# sourceMappingURL=main.css.map */

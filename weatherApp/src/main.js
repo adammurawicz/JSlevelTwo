@@ -37,19 +37,31 @@ const onEnterSubmit = e => {
         fadeInOut()
         let query = viewElement.searchInput.value || 'Poznan'
         getWeatherByCity(query).then(data => {
-            console.log(data.main);
-            switchView()
-            fadeInOut()
+            displayWeatherData(data)
         })
     }
 }
 
 const onClickSubmit = () => {
+    fadeInOut()
     let query = viewElement.searchInput.value || 'Poznan'
     getWeatherByCity(query).then(data => {
-        console.log(data.main);
-        switchView()
+        displayWeatherData(data)
     })
+}
+
+const displayWeatherData = data => {
+    switchView()
+    fadeInOut()
+    
+    viewElement.weatherCity.textContent = data.main.name
+    viewElement.weatherIcon.setAttribute('src', `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`)
+    viewElement.weatherIcon.setAttribute('alt', data.weather[0].main)
+
+    viewElement.weatherCurrentTemp.textContent = `Current temp: ${data.main.temp.toFixed(1)}°C`
+    viewElement.weatherMaxTemp.textContent = `Max temp: ${data.main.temp_min.toFixed(1)}°C`
+    viewElement.weatherMinTemp.textContent = `Min temp: ${data.main.temp_max.toFixed(1)}°C`
+    console.log(data.weather[0].main);
 }
 
 const fadeInOut = () => {
