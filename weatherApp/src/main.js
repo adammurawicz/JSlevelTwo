@@ -1,95 +1,78 @@
-import {getWeatherByCity} from './apiService.js'
+import { getWeatherByCity } from './apiService.js'
+import { mapListToDOMElements } from './domActions.js'
 
-const viewElement = {}
 
-const GetDomElement = () => {
-    viewElement.mainContainer = document.querySelector('#mainContainer')
-    viewElement.weatherSearchView = document.querySelector('#weatherSearchView')
-    viewElement.weatherForecastView = document.querySelector('#weatherForecastView')
-
-    viewElement.searchInput = document.querySelector('#searchInput')
-    viewElement.searchButton = document.querySelector('#searchButton')
-    viewElement.weatherCityContainer = document.querySelector('#weatherCityContainer')
-
-    viewElement.weatherCity = document.querySelector('#weatherCity')
-    viewElement.weatherIcon = document.querySelector('#weatherIcon')
-
-    viewElement.weatherCurrentTemp = document.querySelector('#weatherCurrentTemp')
-    viewElement.weatherMaxTemp = document.querySelector('#weatherMaxTemp')
-    viewElement.weatherMinTemp = document.querySelector('#weatherMinTemp')
-
-    viewElement.returnToSearchBtn = document.querySelector('#returnToSearchBtn')
-}
-
-const setupListener = () => {
-    viewElement.searchInput.addEventListener('keydown', onEnterSubmit)
-    viewElement.searchButton.addEventListener('click', onClickSubmit)
-    viewElement.returnToSearchBtn.addEventListener('click', returnToSearch)
-}
-
-const startApp = () => {
-    GetDomElement()
-    setupListener()
-}
-
-const onEnterSubmit = e => {
-    if(e.keyCode === 13) {
-        fadeInOut()
-        let query = viewElement.searchInput.value || 'Poznan'
-        getWeatherByCity(query).then(data => {
-            displayWeatherData(data)
-        })
+class WeatherApp {
+    constructor() {
+        this.viewElems = {}
+        this.InitializeApp()
     }
-}
-
-const onClickSubmit = () => {
-    fadeInOut()
-    let query = viewElement.searchInput.value || 'Poznan'
-    getWeatherByCity(query).then(data => {
-        displayWeatherData(data)
-    })
-}
-
-const displayWeatherData = data => {
-    switchView()
-    fadeInOut()
     
-    viewElement.weatherCity.textContent = data.main.name
-    viewElement.weatherIcon.setAttribute('src', `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`)
-    viewElement.weatherIcon.setAttribute('alt', data.weather[0].main)
+    InitializeApp = () => {
+        this.connectDOMElements()
+        this.setupListeners()
+    }
+    
+    connectDOMElements = () => {
+        const listOfIds = Array.from(document.querySelectorAll('[id]')).map(elem => elem.id)
+        this.viewElems = mapListToDOMElements(listOfIds)
+    }
 
-    viewElement.weatherCurrentTemp.textContent = `Current temp: ${data.main.temp.toFixed(1)}°C`
-    viewElement.weatherMaxTemp.textContent = `Max temp: ${data.main.temp_min.toFixed(1)}°C`
-    viewElement.weatherMinTemp.textContent = `Min temp: ${data.main.temp_max.toFixed(1)}°C`
+    setupListeners = () => {
+        this.viewElems.searchInput.addEventListener('keydown', this.handleSubmit)
+        this.viewElems.searchButton.addEventListener('keydown', this.handleSubmit)
+        this.viewElems.returnToSearchBtn.addEventListener('click', this.returnToSearch)
+    }
+
+    handleSubmit = () => {
+        if (event.type === 'click' || event.key === 'Enter') {
+            this.fadeInOut()
+            let query = this.viewElems.searchInput.value
+            getWeatherByCity(query).then(data => {
+            this.displayWeatherData(data)
+            })
+        }
+    }
+
+
+fadeInOut = () => {
+    if(this.viewElems.mainContainer.style.opacity === '1' || this.viewElems.mainContainer.style.opacity === '') {
+        this.viewElems.mainContainer.style.opacity = '0'
+    } else {
+        this.viewElems.mainContainer.style.opacity = '1'
+    }
+}
+
+switchView = () => {
+    if(this.viewElems.weatherSearchView.style.display !== 'none') {
+        this.viewElems.weatherSearchView.style.display = 'none'
+        this.viewElems.weatherForecastView.style.display = 'block'
+    } else {
+        this.viewElems.weatherForecastView.style.display = 'none'
+        this.viewElems.weatherSearchView.style.display = 'flex'
+    }
+}
+
+   returnToSearch = () => {
+        this.fadeInOut()
+        setTimeout(() => {
+            this.switchView()
+            this.fadeInOut()
+        }, 500)
+    }
+
+displayWeatherData = data => {
+    this.switchView()
+    this.fadeInOut()
+
+    this.viewElems.weatherCity.textContent = data.main.name
+    this.viewElems.weatherIcon.setAttribute('src', `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`)
+    this.viewElems.weatherIcon.setAttribute('alt', data.weather[0].main)
+
+    this.viewElems.weatherCurrentTemp.textContent = `Current temp: ${data.main.temp.toFixed(1)}°C`
+    this.viewElems.weatherMaxTemp.textContent = `Max temp: ${data.main.temp_min.toFixed(1)}°C`
+    this.viewElems.weatherMinTemp.textContent = `Min temp: ${data.main.temp_max.toFixed(1)}°C`
     console.log(data.weather[0].main);
-}
-
-const fadeInOut = () => {
-    if(viewElement.mainContainer.style.opacity === '1' || viewElement.mainContainer.style.opacity === '') {
-        viewElement.mainContainer.style.opacity = '0'
-    } else {
-        viewElement.mainContainer.style.opacity = '1'
     }
 }
-
-const switchView = () => {
-    if(viewElement.weatherSearchView.style.display !== 'none') {
-        viewElement.weatherSearchView.style.display = 'none'
-        viewElement.weatherForecastView.style.display = 'flex'
-    } else {
-        viewElement.weatherForecastView.style.display = 'none'
-        viewElement.weatherSearchView.style.display = 'flex'
-    }
-}
-
-const returnToSearch = () => {
-    fadeInOut()
-    setTimeout(() => {
-        switchView()
-        fadeInOut()
-    }, 500)
-}
-
-document.addEventListener('DOMContentLoaded', startApp)
-console.log(viewElement);
-
+document.addEventListener('DOMContentLoader', new WeatherApp())
