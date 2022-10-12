@@ -1,4 +1,5 @@
-import { mapListToDOMElements } from './domInteraction.js'
+import { mapListToDOMElements, createDOMElem } from './domInteraction.js'
+import { getShowsByKey } from './requests.js'
 
 class TvMaze {
     constructor() {
@@ -11,6 +12,7 @@ class TvMaze {
     initializeApp = () => {
         this.connectDOMElements()
         this.setupListeners()
+        this.fetchAndDisplayShows()
     }
 
     connectDOMElements = () => {
@@ -31,6 +33,47 @@ class TvMaze {
 
     setCurrentNameFilter = () => {
         this.selectedName = event.target.dataset.showName
+        this.fetchAndDisplayShows()
+    }
+
+    fetchAndDisplayShows = () => {
+        getShowsByKey(this.selectedName).then(shows => this.renderCards(shows))
+    }
+
+    renderCards = (shows) => {
+        this.viewElems.showsWrapper.innerHTML = ""
+
+        for (const { show } of shows) {
+            this.createShowCard(show)
+        }
+    }
+
+    createShowCard = show => {
+        const divCard = createDOMElem('div', 'card')
+        const divCardBody = createDOMElem('div', 'card-body')
+        const h5 = createDOMElem('h5', 'card-title', show.name)
+        const btn = createDOMElem('button', 'btn btn-primary', 'Show more info')
+        let img, p
+        
+        if(show.image) {
+            img = createDOMElem('img', 'card-img-top', null, show.image.medium)
+        } else {
+            img = createDOMElem('img', 'card-img-top', null, 'https://via.placeholder.com/210x295')
+        }
+        
+        if(show.image) {
+            p = createDOMElem('p', 'card-text', `${show.summary.slice(0, 80)}...`)
+        } else {
+            p = createDOMElem('p', 'card-text', 'There is no summary for that show yet')
+        }
+
+        divCard.appendChild(divCardBody)
+        divCardBody.appendChild(img)
+        divCardBody.appendChild(h5)
+        divCardBody.appendChild(p)
+        divCardBody.appendChild(btn)
+
+        this.viewElems.showsWrapper.appendChild(divCard)
     }
 }
 
