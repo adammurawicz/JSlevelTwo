@@ -61,7 +61,7 @@ class TvMaze {
             img = createDOMElem('img', 'card-img-top', null, 'https://via.placeholder.com/210x295')
         }
         
-        if(show.image) {
+        if(show.summary) {
             p = createDOMElem('p', 'card-text', `${show.summary.slice(0, 80)}...`)
         } else {
             p = createDOMElem('p', 'card-text', 'There is no summary for that show yet')
